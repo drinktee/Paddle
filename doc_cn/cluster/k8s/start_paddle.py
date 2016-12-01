@@ -34,6 +34,8 @@ PADDLE_PORTS_NUM = os.getenv("CONF_PADDLE_PORTS_NUM")
 PADDLE_PORTS_NUM_SPARSE = os.getenv("CONF_PADDLE_PORTS_NUM_SPARSE")
 PADDLE_SERVER_NUM = os.getenv("CONF_PADDLE_GRADIENT_NUM")
 
+tokenpath = '/var/run/secrets/kubernetes.io/serviceaccount/token'
+
 
 def refine_unknown_args(cmd_args):
     '''
@@ -80,8 +82,16 @@ def getPodList():
 
     pod = API + NAMESPACE + "/pods?"
     job = JOBNAME
-    return requests.get(apiserver + pod + JOBSELECTOR + job,
-                        verify=False).json()
+    if os.path.isfile(tokenpath):
+        tokenfile = open(tokenpath, mode='r')
+        token = tokenfile.read()
+        Bearer = "Bearer " + token
+        headers = {"Authorization": Bearer}
+        return requests.get(apiserver + pod + JOBSELECTOR + job,
+                            headers=headers, verify=False).json()
+    else:
+        return requests.get(apiserver + pod + JOBSELECTOR + job,
+                            verify=False).json()
 
 
 def getIdMap(podlist):
