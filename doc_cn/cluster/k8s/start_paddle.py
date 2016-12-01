@@ -147,7 +147,7 @@ def startPaddle(idMap={}, train_args_dict=None):
     print startPserver
     os.system(startPserver)
     # wait until pservers completely start
-    time.sleep(10)
+    time.sleep(20)
     startTrainer = program + args + " > " + \
         logDir + "/train.log 2>&1 < /dev/null"
     print startTrainer
@@ -163,7 +163,7 @@ if __name__ == '__main__':
     podlist = getPodList()
     # need to wait until all pods are running
     while not isPodAllRunning(podlist):
-        time.sleep(10)
+        time.sleep(20)
         podlist = getPodList()
     idMap = getIdMap(podlist)
     startPaddle(idMap, train_args_dict)
